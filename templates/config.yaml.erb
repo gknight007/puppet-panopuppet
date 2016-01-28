@@ -1,0 +1,95 @@
+############################
+# PanoPuppet CONFIGURATION #
+############################
+
+sources:
+  '<%= @cfg_source_name -%>':
+    'DEFAULT': true
+# URI to Puppet DB server with method, host and port
+    'PUPPETDB_HOST': '<%= @cfg_puppetdb_url -%>'
+# PUPPET DB CERTS - ordering is important here
+# Also, the files must be readable by the http daemon user
+    'PUPPETDB_CERTIFICATES':
+      - '<%= @cfg_puppetdb_pub_key_path -%>'
+      - '<%= @cfg_puppetdb_priv_key_path -%>'
+# This setting is the default
+    'PUPPETDB_VERIFY_SSL': <%= @cfg_puppetdb_verify_ssl -%>
+    # Filebucket configuraion for the PuppetDB Production
+    'PUPPETMASTER_CLIENTBUCKET_SHOW': <%= @cfg_master_client_bucket_show -%>
+    'PUPPETMASTER_CLIENTBUCKET_HOST': '<%= @cfg_master_client_bucket_host -%>'
+    'PUPPETMASTER_CLIENTBUCKET_CERTIFICATES':
+      - '<%= @cfg_master_client_bucket_pub_key -%>'
+      - '<%= @cfg_master_client_bucket_priv_key -%>'
+    'PUPPETMASTER_CLIENTBUCKET_VERIFY_SSL': '<%= @cfg_master_client_bucket_ca_cert -%>'
+    # Fileserver configuration for the PuppetDB Production
+    'PUPPETMASTER_FILESERVER_SHOW': <%= @cfg_master_file_server_show -%>
+    'PUPPETMASTER_FILESERVER_HOST': '<%= @cfg_master_file_server_url -%>'
+    'PUPPETMASTER_FILESERVER_CERTIFICATES':
+      - '<%= @cfg_master_file_server_pub_key -%>'
+      - '<%= @cfg_master_file_server_priv_key -%>'
+    'PUPPETMASTER_FILESERVER_VERIFY_SSL': '<%= @cfg_master_file_server_ca_cert -%>'
+    'PUPPET_RUN_INTERVAL': <%= @cfg_puppet_run_interval -%>
+
+# Time to hold the cache for pages - specified in seconds
+CACHE_TIME: <%= @cfg_cache_timeout -%>
+
+#SQLITE_DIR: Where to write the sqliteDB used by panopuppet
+SQLITE_DIR: '<%= @cfg_sqlite_dir -%>'
+
+# Authentication method - Available auth methods = ldap and basic
+AUTH_METHOD: '<%= @cfg_auth_method -%>'
+
+# Or if you want ldap authentication uncomment this line and delete the one above
+# AUTH_METHOD: 'ldap'
+
+LDAP_SERVER: '<%= @cfg_ldap_server -%>'
+LDAP_BIND_DN: '<%= @cfg_ldap_bind_dn -%>'
+LDAP_BIND_PW: '<%= @cfg_ldap_bind_pw -%>'
+LDAP_USEARCH_PATH: '<%= @cfg_ldap_user_search_path -%>'
+LDAP_GSEARCH_PATH: '<%= @cfg_ldap_group_search_path -%>'
+LDAP_ALLOW_GRP: <%= @cfg_ldap_allow_group -%>
+LDAP_DENY_GRP: <%= @cfg_ldap_deny_group -%>
+
+# If you have multiple groups you want to specify use a HASH, a string is sufficent if you just have one group.
+LDAP_SUPERUSER_GRP: '<%= @cfg_ldap_superuser_group -%>'
+LDAP_STAFF_GRP:
+<% @cfg_ldap_staff_group.each do |ldapGroupSt| %>
+  - '<%= @ldapGroupSt -%>'
+<% end %>
+
+ENABLE_PERMISSIONS: <%= @cfg_enable_permissions -%>
+
+NODES_DEFAULT_FACTS:
+  - 'operatingsystem'
+  - 'operatingsystemrelease'
+  - 'kernel'
+  - 'ipaddress'
+
+########################
+# DJANGO CONFIGURATION #
+########################
+
+# The session age is how long after the latest request the session cookie should expire.
+# It is specified in hours - So the below would expire the cookie after two hours.
+SESSION_AGE: <%= @cfg_session_age -%>
+
+
+SECRET_KEY: '<%= @cfg_secret_key -%>'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG: <%= @cfg_debug -%>
+TEMPLATE_DEBUG: <%= @cfg_template_debug -%>
+# Allowed Hosts must be an array.
+
+ALLOWED_HOSTS:
+<% @cfg_allowed_hosts.each do |anAllowedHost| %>
+  - '<%= @anAllowedHost -%>'
+<% end %>
+# Timezone settings for panopuppet. Catalog, report, fact times will be show localtime rather than GMT.
+LANGUAGE_CODE: '<%= @cfg_language_code -%>'
+TIME_ZONE: '<%= @cfg_time_zone -%>'
+
+# Where should the static files (js, css, etc) be stored?
+STATIC_ROOT: '<%= @cfg_static_root -%>'
+
+
