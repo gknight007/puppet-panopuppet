@@ -42,6 +42,12 @@ class panopuppet::config {
     ],
   }
 
+  exec { 'chown sqlite db':
+    command => "chown ${::panopuppet::wsgi_permissions_user} ${::panopuppet::wsgi_sqlitedb_path}",
+    unless  => "[ \"$(stat -c %U ${::panopuppet::wsgi_sqlitedb_path})\" == \"${::panopuppet::wsgi_permissions_user}\" ]",
+    require => Exec['DB Migrate'],
+  }
+
 
 
   apache::vhost { $::panopuppet::service_vhost_fqdn:
