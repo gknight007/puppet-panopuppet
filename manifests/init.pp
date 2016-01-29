@@ -3,7 +3,7 @@
 class panopuppet (
   $python3_package                   = 'python3',
   $python3_package_ensure            = 'latest',
-  $python3_modwsgi_package           = 'mod_wsgi3',
+  $python3_modwsgi_package           = 'mod_wsgi',
   $python3_modwsgi_package_ensure    = 'latest',
   $python3_path                      = '/opt/python3/bin/python3',
   $pip3_path                         = '/opt/python3/bin/pip3',
