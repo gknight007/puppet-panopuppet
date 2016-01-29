@@ -93,14 +93,14 @@ NODES_DEFAULT_FACTS:
 
 # The session age is how long after the latest request the session cookie should expire.
 # It is specified in hours - So the below would expire the cookie after two hours.
-SESSION_AGE: <%= scope['panopuppet::cfg_session_age'] -%>
+SESSION_AGE: <%= scope['panopuppet::cfg_session_age'] %>
 
 
 SECRET_KEY: '<%= scope['panopuppet::cfg_secret_key'] -%>'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG: <%= scope['panopuppet::cfg_debug'] -%>
-TEMPLATE_DEBUG: <%= scope['panopuppet::cfg_template_debug'] -%>
+DEBUG: <%= scope['panopuppet::cfg_debug'] %>
+TEMPLATE_DEBUG: <%= scope['panopuppet::cfg_template_debug'] %>
 # Allowed Hosts must be an array.
 
 ALLOWED_HOSTS:
