@@ -52,7 +52,7 @@ class panopuppet::config {
     wsgi_daemon_process => $::panopuppet::wsgi_daemon_process_name,
 
     wsgi_daemon_process_options => {
-      threads => $::panpuppet::wsgi_daemon_process_threads,
+      threads => $::panopuppet::wsgi_daemon_process_threads,
     },
 
     aliases => [{
