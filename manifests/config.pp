@@ -18,7 +18,7 @@ class panopuppet::config {
     mode   => '0755',
   } ->
 
-  file { '/etc/panopuppet/config.yaml':
+  file { $::panopuppet::panopuppet_cfg_path :
     content => template('panopuppet/config.yaml.erb'),
   } ->
 
@@ -28,8 +28,9 @@ class panopuppet::config {
     require => [
        Package[$::panopuppet::python3_package],
        Package[$::panopuppet::panopuppet_package],
+       File[$::panopuppet::panopuppet_cfg_path],
     ],
-  } ->
+  } 
  
   exec { 'DB Migrate':
     command => "${::panopuppet::python3_path} ${::panopuppet::wsgi_manage_script_path} migrate",
@@ -37,6 +38,7 @@ class panopuppet::config {
     require => [
        Package[$::panopuppet::python3_package],
        Package[$::panopuppet::panopuppet_package],
+       Exec['Pip install requirements'],
     ],
   }
 

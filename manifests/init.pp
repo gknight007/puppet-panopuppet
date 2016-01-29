@@ -8,6 +8,7 @@ class panopuppet (
   $python3_path                      = '/opt/python3/bin/python3',
   $pip3_path                         = '/opt/python3/bin/pip3',
   $panopuppet_package                = 'panopuppet',
+  $panopuppet_cfg_path               = '/etc/panopuppet/config.yaml',
   $service_vhost_fqdn                = $::fqdn,
   $service_vhost_port                = '80',
   $cfg_auth_method                   = 'basic',
