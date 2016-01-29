@@ -21,6 +21,11 @@ class panopuppet::config {
   file { '/etc/panopuppet/config.yaml':
     content => template('panopuppet/config.yaml.erb'),
   } ->
+
+  exec { 'Pip install requirements':
+    command => "${panopuppet::pip3_path} install -r ${panopuppet::wsgi_requirements_file} && touch ${panopuppet::wsgi_requirements_file}.installed"
+    creates => "${panopuppet::wsgi_requirements_file}.installed"
+  } ->
  
   exec { 'DB Migrate':
     command => "${::panopuppet::python3_path} ${::panopuppet::wsgi_manage_script_path} migrate",

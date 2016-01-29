@@ -6,6 +6,7 @@ class panopuppet (
   $python3_modwsgi_package           = 'mod_wsgi3',
   $python3_modwsgi_package_ensure    = 'latest',
   $python3_path                      = '/opt/python3/bin/python3',
+  $pip3_path                         = '/opt/python3/bin/pip3',
   $panopuppet_package                = 'panopuppet',
   $service_vhost_fqdn                = $::fqdn,
   $service_vhost_port                = '80',
@@ -54,6 +55,7 @@ class panopuppet (
   $wsgi_daemon_process_threads       = '5',
   $wsgi_permissions_user             = 'apache',
   $wsgi_permissions_group            = 'apache',
+  $wsgi_requirements_file            = '/etc/panopuppet/requirements.txt',
 ){
 
   $wsgi_app_script_path = "${wsgi_directory}/${wsgi_script_name}"
