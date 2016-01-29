@@ -5,6 +5,7 @@ class panopuppet (
   $python3_package_ensure            = 'latest',
   $python3_modwsgi_package           = 'mod_wsgi3',
   $python3_modwsgi_package_ensure    = 'latest',
+  $python3_path                      = '/opt/python3/bin/python3',
   $panopuppet_package                = 'panopuppet',
   $service_vhost_fqdn                = $::fqdn,
   $service_vhost_port                = '80',

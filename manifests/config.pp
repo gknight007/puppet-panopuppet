@@ -23,7 +23,7 @@ class panopuppet::config {
   } ->
  
   exec { 'DB Migrate':
-    command => "python3 ${::panopuppet::wsgi_manage_script_path} migrate",
+    command => "${::panopuppet::python3_path} ${::panopuppet::wsgi_manage_script_path} migrate",
     creates => $::panopuppet::wsgi_sqlitedb_path,
     require => [
        Package[$::panopuppet::python3_package],
