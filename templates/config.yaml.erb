@@ -3,7 +3,7 @@
 ############################
 
 sources:
-  '<%= @cfg_source_name -%>':
+  '<%= scope['panopuppet::cfg_source_name'] -%>':
     'DEFAULT': true
 # URI to Puppet DB server with method, host and port
     'PUPPETDB_HOST': '<%= @cfg_puppetdb_url -%>'
@@ -53,7 +53,7 @@ LDAP_DENY_GRP: <%= @cfg_ldap_deny_group -%>
 # If you have multiple groups you want to specify use a HASH, a string is sufficent if you just have one group.
 LDAP_SUPERUSER_GRP: '<%= @cfg_ldap_superuser_group -%>'
 LDAP_STAFF_GRP:
-<% @cfg_ldap_staff_group.each do |ldapGroupSt| %>
+<% scope['panopuppet::cfg_ldap_staff_group'].each do |ldapGroupSt| %>
   - '<%= @ldapGroupSt -%>'
 <% end %>
 
@@ -82,7 +82,7 @@ TEMPLATE_DEBUG: <%= @cfg_template_debug -%>
 # Allowed Hosts must be an array.
 
 ALLOWED_HOSTS:
-<% @cfg_allowed_hosts.each do |anAllowedHost| %>
+<% scope['panopuppet::cfg_allowed_hosts'].each do |anAllowedHost| %>
   - '<%= @anAllowedHost -%>'
 <% end %>
 # Timezone settings for panopuppet. Catalog, report, fact times will be show localtime rather than GMT.
