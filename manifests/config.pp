@@ -1,6 +1,6 @@
 
 
-class ::panopuppet::config {
+class panopuppet::config {
 
 
   include apache
@@ -23,13 +23,18 @@ class ::panopuppet::config {
   } ->
  
   exec { 'DB Migrate':
-    command => "python3 $::panopuppet::wsgi_manage_script_path migrate",
+    command => "python3 ${::panopuppet::wsgi_manage_script_path} migrate",
     creates => $::panopuppet::wsgi_sqlitedb_path,
+    require => [
+       Package[$::panopuppet::python3_package],
+       Package[$::panopuppet::panopuppet_package],
+    ],
   }
 
 
 
   apache::vhost { $::panopuppet::service_vhost_fqdn:
+    docroot             => $::panopuppet::cfg_static_root,
    #FIXME: add conig for error and access logging
     port                => $::panopuppet::service_vhost_port,
     wsgi_script_aliases => { '/' => $::panopuppet::wsgi_app_script_path },
@@ -49,6 +54,5 @@ class ::panopuppet::config {
       'require' => 'all granted',
     }],
   }
-
 
 }
