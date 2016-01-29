@@ -60,6 +60,5 @@ class panopuppet (
   $wsgi_sqlitedb_path = "${cfg_sqlite_dir}/${panopuppet_sqlite_filename}"
 
   class { '::panopuppet::install': } ->
-  class { '::panopuppet::config':  } ->
-  class { '::panopuppet::service': } 
+  class { '::panopuppet::config':  }
 } 
