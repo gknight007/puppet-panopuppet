@@ -23,8 +23,12 @@ class panopuppet::config {
   } ->
 
   exec { 'Pip install requirements':
-    command => "${panopuppet::pip3_path} install -r ${panopuppet::wsgi_requirements_file} && touch ${panopuppet::wsgi_requirements_file}.installed"
-    creates => "${panopuppet::wsgi_requirements_file}.installed"
+    command => "${panopuppet::pip3_path} install -r ${panopuppet::wsgi_requirements_file} && touch ${panopuppet::wsgi_requirements_file}.installed",
+    creates => "${panopuppet::wsgi_requirements_file}.installed",
+    require => [
+       Package[$::panopuppet::python3_package],
+       Package[$::panopuppet::panopuppet_package],
+    ],
   } ->
  
   exec { 'DB Migrate':
