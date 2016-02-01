@@ -31,15 +31,21 @@ class panopuppet::config {
        File[$::panopuppet::panopuppet_cfg_path],
     ],
   } 
- 
-  exec { 'DB Migrate':
-    command => "${::panopuppet::python3_path} ${::panopuppet::wsgi_manage_script_path} migrate",
+
+  exec { 'DB Make migrations':
+    command => "${::panopuppet::python3_path} ${::panopuppet::wsgi_manage_script_path} makemigrations",
     creates => $::panopuppet::wsgi_sqlitedb_path,
     require => [
        Package[$::panopuppet::python3_package],
        Package[$::panopuppet::panopuppet_package],
        Exec['Pip install requirements'],
     ],
+  }
+ 
+  exec { 'DB Migrate':
+    command => "${::panopuppet::python3_path} ${::panopuppet::wsgi_manage_script_path} migrate",
+    creates => $::panopuppet::wsgi_sqlitedb_path,
+    require => Exec['DB Make migrations'],
   }
 
   exec { 'chown sqlite db':
@@ -52,7 +58,6 @@ class panopuppet::config {
 
   apache::vhost { $::panopuppet::service_vhost_fqdn:
     docroot             => $::panopuppet::cfg_static_root,
-   #FIXME: add conig for error and access logging
     port                => $::panopuppet::service_vhost_port,
     wsgi_script_aliases => { '/' => $::panopuppet::wsgi_app_script_path },
     wsgi_daemon_process => $::panopuppet::wsgi_daemon_process_name,
