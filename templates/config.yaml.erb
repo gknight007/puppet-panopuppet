@@ -1,12 +1,17 @@
-SQLITE_DIR: '<%= scope.lookupvar('::panopuppet::sqlite_dir') %>'
+SQLITE_DIR: '<%= scope.lookupvar('::panopuppet::wsgi_dir') %>'
 SECRET_KEY: '<%= scope.lookupvar('::panopuppet::secret_key') %>'
-DEBUG: <%= scope.lookupvar('::panopuppet::debug') %>
-TEMPLATE_DEBUG: <%= scope.lookupvar('::panopuppet::template_debug') %>
+DEBUG: false
+TEMPLATE_DEBUG: false
 ALLOWED_HOSTS:
 <% scope.lookupvar('::panopuppet::allowed_hosts').each do |aHost| %>
   - '<%= aHost %>'
 <% end %>
-LANGUAGE_CODE: "<%= scope.lookupvar('::panopuppet::django_lang_code') %>"
-TIME_ZONE: "<%= scope.lookupvar('::panopuppet::django_time_zone') %>"
+LANGUAGE_CODE: en
+TIME_ZONE: America/New_York
 STATIC_ROOT: "<%= scope.lookupvar('::panopuppet::static_root') %>"
 
+sources:
+  'Puppet DB':
+    'DEFAULT': true
+    'PUPPETDB_HOST': <%= scope.lookupvar('::panopuppet::puppetdb_url') %>
+    'PUPPETDB_VERIFY_SSL': false
