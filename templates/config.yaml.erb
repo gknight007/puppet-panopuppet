@@ -1,117 +1,17 @@
-############################
-# PanoPuppet CONFIGURATION #
-############################
+SQLITE_DIR: '<%= scope.lookupvar('::panopuppet::wsgi_dir') %>'
+SECRET_KEY: '<%= scope.lookupvar('::panopuppet::secret_key') %>'
+DEBUG: false
+TEMPLATE_DEBUG: false
+ALLOWED_HOSTS:
+<% scope.lookupvar('::panopuppet::allowed_hosts').each do |aHost| %>
+  - '<%= aHost %>'
+<% end %>
+LANGUAGE_CODE: en
+TIME_ZONE: America/New_York
+STATIC_ROOT: "<%= scope.lookupvar('::panopuppet::static_root') %>"
 
 sources:
-  '<%= scope['panopuppet::cfg_source_name'] -%>':
+  'Puppet DB':
     'DEFAULT': true
-# URI to Puppet DB server with method, host and port
-    'PUPPETDB_HOST': '<%= scope['panopuppet::cfg_puppetdb_url'] -%>'
-# PUPPET DB CERTS - ordering is important here
-# Also, the files must be readable by the http daemon user
-<% if scope['panopuppet::cfg_puppetdb_pub_key_path'] %>
-  <% if scope['panopuppet::cfg_puppetdb_pub_key_path'] != '' %>
-    'PUPPETDB_CERTIFICATES':
-      - '<%= scope['panopuppet::cfg_puppetdb_pub_key_path'] -%>'
-      - '<%= scope['panopuppet::cfg_puppetdb_priv_key_path'] -%>'
-  <% end %>
-<% end %>
-# This setting is the default
-    'PUPPETDB_VERIFY_SSL': <%= scope['panopuppet::cfg_puppetdb_verify_ssl'] -%>
-
-    # Filebucket configuraion for the PuppetDB Production
-<% if scope['panopuppet::cfg_master_client_bucket_show'].downcase == 'true' %>
-    'PUPPETMASTER_CLIENTBUCKET_SHOW': <%= scope['panopuppet::cfg_master_client_bucket_show'] -%>
-    'PUPPETMASTER_CLIENTBUCKET_HOST': '<%= scope['panopuppet::cfg_master_client_bucket_host'] -%>'
-  <% if scope['panopuppet::cfg_master_client_bucket_pub_key'] %>
-    <% if scope['panopuppet::cfg_master_client_bucket_pub_key'] != '' %>
-    'PUPPETMASTER_CLIENTBUCKET_CERTIFICATES':
-      - '<%= scope['panopuppet::cfg_master_client_bucket_pub_key'] -%>'
-      - '<%= scope['panopuppet::cfg_master_client_bucket_priv_key'] -%>'
-    <% end %>
-  <% end %>
-    'PUPPETMASTER_CLIENTBUCKET_VERIFY_SSL': '<%= scope['panopuppet::cfg_master_client_bucket_ca_cert'] -%>'
-<% end %>
-
-    # Fileserver configuration for the PuppetDB Production
-<% if scope['panopuppet::cfg_master_file_server_show'].downcase == 'true' %>
-    'PUPPETMASTER_FILESERVER_SHOW': <%= scope['panopuppet::cfg_master_file_server_show'] -%>
-    'PUPPETMASTER_FILESERVER_HOST': '<%= scope['panopuppet::cfg_master_file_server_url'] -%>'
- <% if scope['panopuppet::cfg_master_file_server_pub_key'] %> 
-   <% if scope['panopuppet::cfg_master_file_server_pub_key'] != '' %> 
-    'PUPPETMASTER_FILESERVER_CERTIFICATES':
-      - '<%= scope['panopuppet::cfg_master_file_server_pub_key'] -%>'
-      - '<%= scope['panopuppet::cfg_master_file_server_priv_key'] -%>'
-    <% end %>
-  <% end %>
-    'PUPPETMASTER_CLIENTBUCKET_VERIFY_SSL': '<%= scope['panopuppet::cfg_master_client_bucket_ca_cert'] -%>'
-    'PUPPETMASTER_FILESERVER_VERIFY_SSL': '<%= scope['panopuppet::cfg_master_file_server_ca_cert'] -%>'
-<% end %>
-
-    'PUPPET_RUN_INTERVAL': <%= scope['panopuppet::cfg_puppet_run_interval'] -%>
-
-# Time to hold the cache for pages - specified in seconds
-CACHE_TIME: <%= scope['panopuppet::cfg_cache_timeout'] -%>
-
-#SQLITE_DIR: Where to write the sqliteDB used by panopuppet
-SQLITE_DIR: '<%= scope['panopuppet::cfg_sqlite_dir'] -%>'
-
-# Authentication method - Available auth methods = ldap and basic
-AUTH_METHOD: '<%= scope['panopuppet::cfg_auth_method'] -%>'
-
-# Or if you want ldap authentication uncomment this line and delete the one above
-# AUTH_METHOD: 'ldap'
-
-<% if scope['panopuppet::cfg_auth_method'].downcase == 'ldap' %>
-LDAP_SERVER: '<%= scope['panopuppet::cfg_ldap_server'] -%>'
-LDAP_BIND_DN: '<%= scope['panopuppet::cfg_ldap_bind_dn'] -%>'
-LDAP_BIND_PW: '<%= scope['panopuppet::cfg_ldap_bind_pw'] -%>'
-LDAP_USEARCH_PATH: '<%= scope['panopuppet::cfg_ldap_user_search_path'] -%>'
-LDAP_GSEARCH_PATH: '<%= scope['panopuppet::cfg_ldap_group_search_path'] -%>'
-LDAP_ALLOW_GRP: <%= scope['panopuppet::cfg_ldap_allow_group'] -%>
-LDAP_DENY_GRP: <%= scope['panopuppet::cfg_ldap_deny_group'] -%>
-
-# If you have multiple groups you want to specify use a HASH, a string is sufficent if you just have one group.
-LDAP_SUPERUSER_GRP: '<%= scope['panopuppet::cfg_ldap_superuser_group'] -%>'
-LDAP_STAFF_GRP:
-<% scope['panopuppet::cfg_ldap_staff_group'].each do |ldapGroupSt| %>
-  - '<%= @ldapGroupSt -%>'
-<% end %>
-<% end %>
-
-ENABLE_PERMISSIONS: <%= scope['panopuppet::cfg_enable_permissions'] -%>
-
-NODES_DEFAULT_FACTS:
-  - 'operatingsystem'
-  - 'operatingsystemrelease'
-  - 'kernel'
-  - 'ipaddress'
-
-########################
-# DJANGO CONFIGURATION #
-########################
-
-# The session age is how long after the latest request the session cookie should expire.
-# It is specified in hours - So the below would expire the cookie after two hours.
-SESSION_AGE: <%= scope['panopuppet::cfg_session_age'] %>
-
-
-SECRET_KEY: '<%= scope['panopuppet::cfg_secret_key'] -%>'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG: <%= scope['panopuppet::cfg_debug'] %>
-TEMPLATE_DEBUG: <%= scope['panopuppet::cfg_template_debug'] %>
-# Allowed Hosts must be an array.
-
-ALLOWED_HOSTS:
-<% scope['panopuppet::cfg_allowed_hosts'].each do |anAllowedHost| %>
-  - '<%= @anAllowedHost -%>'
-<% end %>
-# Timezone settings for panopuppet. Catalog, report, fact times will be show localtime rather than GMT.
-LANGUAGE_CODE: '<%= scope['panopuppet::cfg_language_code'] -%>'
-TIME_ZONE: '<%= scope['panopuppet::cfg_time_zone'] -%>'
-
-# Where should the static files (js, css, etc) be stored?
-STATIC_ROOT: '<%= scope['panopuppet::cfg_static_root'] -%>'
-
-
+    'PUPPETDB_HOST': <%= scope.lookupvar('::panopuppet::puppetdb_url') %>
+    'PUPPETDB_VERIFY_SSL': false

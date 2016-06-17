@@ -1,68 +1,96 @@
 
-
 class panopuppet (
-  $python3_package                   = 'python3',
-  $python3_package_ensure            = 'latest',
-  $python3_modwsgi_package           = 'mod_wsgi',
-  $python3_modwsgi_package_ensure    = 'latest',
-  $python3_path                      = '/opt/python3/bin/python3',
-  $pip3_path                         = '/opt/python3/bin/pip3',
-  $panopuppet_package                = 'panopuppet',
-  $panopuppet_cfg_path               = '/etc/panopuppet/config.yaml',
-  $service_vhost_fqdn                = $::fqdn,
-  $service_vhost_port                = '80',
-  $cfg_auth_method                   = 'basic',
-  $cfg_sqlite_dir                    = '/var/www/panopuppet',
-  $cfg_cache_timeout                 = '60',
-  $cfg_ldap_server                   = '',
-  $cfg_ldap_bind_dn                  = '',
-  $cfg_ldap_bind_pw                  = '',
-  $cfg_ldap_user_search_path         = '',
-  $cfg_ldap_group_search_path        = '',
-  $cfg_ldap_allow_group              = '',
-  $cfg_ldap_deny_group               = '',
-  $cfg_ldap_superuser_group          = '',
-  $cfg_ldap_staff_group              = [],
-  $cfg_enable_permissions            = 'true',
-  $cfg_debug                         = 'false',
-  $cfg_template_debug                = 'false',
-  $cfg_static_root                   = '/usr/share/panopuppet/static',
-  $cfg_secret_key                    = 'super_secure_random_key',
-  $cfg_source_name                   = 'PuppetDB Production',
-  $cfg_puppetdb_url                  = '',
-  $cfg_puppetdb_pub_key_path         = '',
-  $cfg_puppetdb_priv_key_path        = '',
-  $cfg_puppetdb_verify_ssl           = 'false',
-  $cfg_master_client_bucket_show     = 'false',
-  $cfg_master_client_bucket_host     = '',
-  $cfg_master_client_bucket_priv_key = '',
-  $cfg_master_client_bucket_pub_key  = '',
-  $cfg_master_client_bucket_ca_cert  = '',
-  $cfg_master_file_server_show       = 'false',
-  $cfg_master_file_server_url        = '',
-  $cfg_master_file_server_pub_key    = '',
-  $cfg_master_file_server_priv_key   = '',
-  $cfg_master_file_server_ca_cert    = '',
-  $cfg_puppet_run_interval           = '30',
-  $cfg_session_age                   = '2',
-  $cfg_allowed_hosts                 = ['127.0.0.1'],
-  $cfg_language_code                 = 'en-US',
-  $cfg_time_zone                     = 'America/New_York',
-  $panopuppet_sqlite_filename        = 'panopuppet.db.sqlite3',
-  $wsgi_directory                    = '/usr/share/panopuppet/wsgi',
-  $wsgi_script_name                  = 'wsgi.py',
-  $wsgi_manage_script_name           = 'manage.py',
-  $wsgi_daemon_process_name          = 'panopuppet',
-  $wsgi_daemon_process_threads       = '5',
-  $wsgi_permissions_user             = 'apache',
-  $wsgi_permissions_group            = 'apache',
-  $wsgi_requirements_file            = '/etc/panopuppet/requirements.txt',
+  $wsgi_dir = '/var/www/panopuppet',
+  $static_root = '/var/www/panopuppet/staticfiles',
+  $secret_key = 'password123',
+  $allowed_hosts = ['*'],
+  $puppetdb_url = '',
+  $vhost_port = 80,
+  $wsgi_thread_count = 5,
 ){
 
-  $wsgi_app_script_path = "${wsgi_directory}/${wsgi_script_name}"
-  $wsgi_manage_script_path = "${wsgi_directory}/${wsgi_manage_script_name}"
-  $wsgi_sqlitedb_path = "${cfg_sqlite_dir}/${panopuppet_sqlite_filename}"
+  $cfg_file = "${wsgi_dir}/config.yaml"
 
-  class { '::panopuppet::install': } ->
-  class { '::panopuppet::config':  }
-} 
+  include apache
+  
+  package { [[
+    'httpd-devel',
+    'python34',
+    'python34-devel',
+    'libyaml-devel',
+    'openldap-devel',
+    'cyrus-sasl-devel',
+    'gcc',
+    'make',
+    'panopuppet',
+    'python3-mod_wsgi',
+    'python3-pip',
+    ]]:
+  
+    ensure => latest,
+  }
+  
+  
+  apache::vhost { 'panopuppet':
+      docroot             => $static_root,
+      port                => $vhost_port,
+      wsgi_script_aliases => { '/' => "${wsgi_dir}/wsgi.py" },
+      wsgi_daemon_process => "panopuppet",
+  
+      wsgi_daemon_process_options => {
+        threads => $wsgi_thread_count,
+      },
+  
+      aliases => [{
+        alias => '/static',
+        path  => $static_root,
+      }],
+  
+      directories => [{
+        'path'    => $static_root,
+        'require' => 'all granted',
+      }],
+  }
+
+
+  file { $wsgi_dir :
+    ensure => directory,
+  } ->
+  
+  file { "${wsgi_dir}/manage.py" :
+    content => template("panopuppet/manage.py.erb"),
+    mode    => '0755',
+  } ->
+  
+  file { "${wsgi_dir}/wsgi.py" :
+    content => template("panopuppet/wsgi.py.erb"),
+    mode    => '0755',
+  } ->
+  
+  file { "${wsgi_dir}/config.yaml" :
+    content => template("panopuppet/config.yaml.erb"),
+    mode    => '0600',
+  } ->
+  
+  exec { "python3 ${wsgi_dir}/manage.py collectstatic":
+    creates => "${wsgi_dir}/staticfiles",
+  } ->
+  
+  exec { "python3 ${wsgi_dir}/manage.py makemigrations":
+    creates => "${wsgi_dir}/panopuppet.db.sqlite3",
+  } ->
+  
+  exec { "python3 ${wsgi_dir}/manage.py syncdb":
+    creates => "${wsgi_dir}/panopuppet.db.sqlite3",
+  } ->
+  
+  exec { "chown -R apache:apache ${wsgi_dir}": 
+    notify => Service['httpd'],
+  }
+  
+
+
+
+}
+
+
