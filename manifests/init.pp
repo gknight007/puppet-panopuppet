@@ -7,7 +7,7 @@ class panopuppet (
 ){
 
   if $puppetdb_url == undef {
-    $puppetdb_url = 'http://localhost:8080',
+    $puppetdb_url = 'http://localhost:8080'
   }
 
   $cfg_file = "${wsgi_dir}/config.yaml"
