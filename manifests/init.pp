@@ -24,7 +24,7 @@ class panopuppet (
     'make',
     'panopuppet',
     'python3-mod_wsgi',
-    'python3-pip',
+    'pip',
     ]]:
   
     ensure => latest,
@@ -58,7 +58,7 @@ class panopuppet (
   } ->
 
   file { "${wsgi_dir}/requirements.txt":
-    source => "puppet:///panopuppet/requirements.txt",
+    source => "puppet:///modules/panopuppet/requirements.txt",
   } ->
 
   exec { "/usr/bin/pip3 install -r ${wsgi_dir}/requirements.txt":
