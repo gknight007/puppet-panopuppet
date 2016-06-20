@@ -89,7 +89,7 @@ class panopuppet (
     creates => "${wsgi_dir}/panopuppet.db.sqlite3",
   } ->
   
-  exec { "/usr/bin/python3 ${wsgi_dir}/manage.py syncdb":
+  exec { "/usr/bin/python3 ${wsgi_dir}/manage.py syncdb --noinput":
     creates => "${wsgi_dir}/panopuppet.db.sqlite3",
   } ->
   
