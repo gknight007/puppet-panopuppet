@@ -32,6 +32,13 @@ class panopuppet (
   
   
 
+
+  file { '/usr/lib64/httpd/modules/mod_wsgi.so':
+    ensure  => link,
+    target  => '/usr/lib64/httpd/modules/mod_wsgi3.so',
+    require => Package['httpd'],
+  }
+
   file { $wsgi_dir :
     ensure => directory,
   } ->
@@ -59,7 +66,7 @@ class panopuppet (
     mode    => '0600',
   } ->
   
-  exec { "/usr/bin/python3 ${wsgi_dir}/manage.py collectstatic":
+  exec { "/usr/bin/python3 ${wsgi_dir}/manage.py collectstatic --noinput":
     creates => "${wsgi_dir}/staticfiles",
   } ->
   
