@@ -4,7 +4,7 @@ class panopuppet (
   $static_root = '/var/www/panopuppet/staticfiles',
   $secret_key = 'password123',
   $allowed_hosts = ['*'],
-  $puppetdb_url = '',
+  $puppetdb_url = 'http://localhost:8080',
   $vhost_port = 80,
   $wsgi_thread_count = 5,
 ){
