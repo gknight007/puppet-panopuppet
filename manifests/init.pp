@@ -72,15 +72,15 @@ class panopuppet (
     mode    => '0600',
   } ->
   
-  exec { "python3 ${wsgi_dir}/manage.py collectstatic":
+  exec { "/usr/bin/python3 ${wsgi_dir}/manage.py collectstatic":
     creates => "${wsgi_dir}/staticfiles",
   } ->
   
-  exec { "python3 ${wsgi_dir}/manage.py makemigrations":
+  exec { "/usr/bin/python3 ${wsgi_dir}/manage.py makemigrations":
     creates => "${wsgi_dir}/panopuppet.db.sqlite3",
   } ->
   
-  exec { "python3 ${wsgi_dir}/manage.py syncdb":
+  exec { "/usr/bin/python3 ${wsgi_dir}/manage.py syncdb":
     creates => "${wsgi_dir}/panopuppet.db.sqlite3",
   } ->
   
