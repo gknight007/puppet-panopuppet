@@ -12,8 +12,6 @@ class panopuppet (
 
   $cfg_file = "${wsgi_dir}/config.yaml"
 
-  include apache
-  
   package { [[
     'httpd-devel',
     'python34',
