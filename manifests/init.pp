@@ -84,7 +84,7 @@ class panopuppet (
     creates => "${wsgi_dir}/panopuppet.db.sqlite3",
   } ->
   
-  exec { "chown -R apache:apache ${wsgi_dir}": 
+  exec { "/usr/bin/chown -R apache:apache ${wsgi_dir}": 
     notify => Service['httpd'],
   }
   
