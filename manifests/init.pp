@@ -4,10 +4,11 @@ class panopuppet (
   $static_root = '/var/www/panopuppet/staticfiles',
   $secret_key = 'password123',
   $allowed_hosts = ['*'],
-  $puppetdb_url = 'http://localhost:8080',
-  $vhost_port = 80,
-  $wsgi_thread_count = 5,
 ){
+
+  if $puppetdb_url == undef {
+    $puppetdb_url = 'http://localhost:8080',
+  }
 
   $cfg_file = "${wsgi_dir}/config.yaml"
 
@@ -32,27 +33,6 @@ class panopuppet (
   }
   
   
-  apache::vhost { 'panopuppet':
-      docroot             => $static_root,
-      port                => $vhost_port,
-      wsgi_script_aliases => { '/' => "${wsgi_dir}/wsgi.py" },
-      wsgi_daemon_process => "panopuppet",
-  
-      wsgi_daemon_process_options => {
-        threads => $wsgi_thread_count,
-      },
-  
-      aliases => [{
-        alias => '/static',
-        path  => $static_root,
-      }],
-  
-      directories => [{
-        'path'    => $static_root,
-        'require' => 'all granted',
-      }],
-  }
-
 
   file { $wsgi_dir :
     ensure => directory,
