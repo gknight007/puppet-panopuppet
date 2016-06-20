@@ -24,6 +24,7 @@ class panopuppet (
     'make',
     'panopuppet',
     'python3-mod_wsgi',
+    'python34-setuptools',
     'pip',
     ]]:
   
