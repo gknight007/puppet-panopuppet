@@ -56,6 +56,14 @@ class panopuppet (
   file { $wsgi_dir :
     ensure => directory,
   } ->
+
+  file { "${wsgi_dir}/requirements.txt":
+    source => "puppet:///panopuppet/requirements.txt",
+  } ->
+
+  exec { "/usr/bin/pip3 install -r ${wsgi_dir}/requirements.txt":
+    creates => "${wsgi_dir}/panopuppet.db.sqlite3",
+  } ->
   
   file { "${wsgi_dir}/manage.py" :
     content => template("panopuppet/manage.py.erb"),
